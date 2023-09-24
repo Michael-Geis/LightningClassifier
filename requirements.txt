@@ -1,0 +1,11 @@
+datasets
+transformers
+
+torch
+torchmetrics
+lightning
+
+numpy
+pandas
+regex
+clean-text
