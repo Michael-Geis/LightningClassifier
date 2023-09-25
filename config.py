@@ -10,7 +10,26 @@ TOKENIZER_PADDING = "max_length"
 ## Data
 NUM_LABELS = 18
 INPUT_TEXT_COLUMN = "title"
-LABEL_COLUMNS = []
+LABEL_COLUMNS = [
+    "math.AG",
+    "math.AP",
+    "math.CA",
+    "math.CO",
+    "math.DG",
+    "math.DS",
+    "math.FA",
+    "math.GR",
+    "math.GT",
+    "math.IT",
+    "math.MP",
+    "math.NA",
+    "math.NT",
+    "math.OC",
+    "math.PR",
+    "math.QA",
+    "math.RT",
+    "math.ST",
+]
 
 ## Data Preprocessing
 DATA_PREPROCESS_BATCH_SIZE = 256
