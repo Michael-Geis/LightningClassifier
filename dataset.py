@@ -50,9 +50,9 @@ class ArXivDataModule(L.LightningDataModule):
             self.source_dataset_dict
         )
         self.preprocessed_dataset_dict.set_format("torch")
-        self.train_dataset = self.preprocessed_dataset_dict["train"]
-        self.val_dataset = self.preprocessed_dataset_dict["val"]
-        self.test_dataset = self.preprocessed_dataset_dict["test"]
+        self.train_dataset = ArXivDataset(self.preprocessed_dataset_dict["train"])
+        self.val_dataset = ArXivDataset(self.preprocessed_dataset_dict["val"])
+        self.test_dataset = ArXivDataset(self.preprocessed_dataset_dict["test"])
 
     def train_dataloader(self):
         return DataLoader(
