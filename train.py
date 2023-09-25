@@ -1,30 +1,30 @@
 import torch
-from lightning import Trainer
-from modelclasses.mlclassifier import MLClassifier
-from lightningmodules.lightningmlclassifier import LightningMLClassifier
-from datamodules.arxiv_datamodule import ArXivDataModule
+import lightning as L
+from dataset import ArXivDataModule
+from model import FineTuneHeadForMLC
+import config
 
-torch.manual_seed(93696)
-dm = ArXivDataModule(data_dir="./data/HF-bert-base-uncased-splits")
+MAX_EPOCHS = config.MAX_EPOCHS
+ACCELERATOR = config.ACCELERATOR
+DEVICES = config.DEVICES
+DETERMINISTIC = config.DETERMINISTIC
+LEARNING_RATE = config.LEARNING_RATE
 
-pytorch_clf = MLClassifier(num_features=768, num_labels=18)
-lightning_model = LightningMLClassifier(model=pytorch_clf, learning_rate=0.05)
 
-trainer = Trainer(
-    max_epochs=10,
-    accelerator="cpu",
-    devices="auto",
-    deterministic=True,
-)
+def main(learning_rate=LEARNING_RATE):
+    torch.manual_seed(93696)
+    dm = ArXivDataModule(path_to_data_dir="./data/")
+    model = FineTuneHeadForMLC(learning_rate=learning_rate)
 
-trainer.fit(model=lightning_model, datamodule=dm)
+    trainer = L.Trainer(
+        max_epochs=MAX_EPOCHS,
+        accelerator=ACCELERATOR,
+        devices=DEVICES,
+        deterministic=DETERMINISTIC,
+    )
 
-train_acc = trainer.validate(dataloaders=dm.train_dataloader())[0]["val_acc"]
-dev_acc = trainer.validate(datamodule=dm)[0]["val_acc"]
-test_acc = trainer.validate(datamodule=dm)[0]["test_acc"]
+    trainer.fit(model=model, datamodule=dm)
 
-print(
-    f"Train Accuracy: {train_acc*100:.2f}%",
-    f"Dev Accuracy: {dev_acc*100:.2f}%",
-    f"Test Accuracy: {test_acc*100:.2f}%",
-)
+
+if __name__ == "__main__":
+    main()
