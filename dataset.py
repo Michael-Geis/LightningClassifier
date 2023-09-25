@@ -17,9 +17,6 @@ import config
 ## CONFIG VARIABLES
 DATA_DIR = config.DATA_DIR
 
-#### TODO ----- PUT THE TOKENIZATION OF THE DATASET BACK INTO PREPARE DATA? DOES THAT
-####            NEED TO BE CALLED ON EVERY GPU?
-
 
 class ArXivDataset(TorchDataset):
     def __init__(self, dataset):
