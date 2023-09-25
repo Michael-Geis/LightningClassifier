@@ -15,7 +15,6 @@ DATA_DIR = config.DATA_DIR
 
 
 def main(learning_rate=LEARNING_RATE):
-    TOKENIZERS_PARALLELISM = False
     torch.manual_seed(93696)
     dm = ArXivDataModule(data_dir=DATA_DIR)
     model = FineTuneHeadForMLC(learning_rate=learning_rate)
