@@ -40,6 +40,8 @@ class ArXivDataset(TorchDataset):
 class ArXivDataModule(L.LightningDataModule):
     def __init__(self, path_to_data_dir):
         super().__init__()
+        self.batch_size = config.DATALOADER_BATCH_SIZE
+        self.num_workers = config.DATALOADER_NUM_WORKERS
 
         self.source_dataset_dict = self._dataset_dict_from_file(path_to_data_dir)
 
@@ -55,22 +57,18 @@ class ArXivDataModule(L.LightningDataModule):
     def train_dataloader(self):
         return DataLoader(
             self.train_dataset,
-            batch_size=config.DATALOADER_BATCH_SIZE,
-            num_workers=config.DATALOADER_NUM_WORKERS,
+            batch_size=self.batch_size,
+            num_workers=self.num_workers,
         )
 
     def val_dataloader(self):
         return DataLoader(
-            self.val_dataset,
-            batch_size=config.DATALOADER_BATCH_SIZE,
-            num_workers=config.DATALOADER_NUM_WORKERS,
+            self.val_dataset, batch_size=self.batch_size, num_workers=self.num_workers
         )
 
     def test_dataloader(self):
         return DataLoader(
-            self.test_dataset,
-            batch_size=config.DATALOADER_BATCH_SIZE,
-            num_workers=config.DATALOADER_NUM_WORKERS,
+            self.test_dataset, batch_size=self.batch_size, num_workers=self.num_workers
         )
 
     ## Data preparation helper functions
