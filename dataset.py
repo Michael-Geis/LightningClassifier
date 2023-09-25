@@ -45,7 +45,7 @@ class ArXivDataModule(L.LightningDataModule):
 
         self.source_dataset_dict = self._dataset_dict_from_file(path_to_data_dir)
 
-    def setup(self, stage):
+    def setup(self, stage=None):
         self.preprocessed_dataset_dict = self._preprocess_dataset_dict(
             self.source_dataset_dict
         )
