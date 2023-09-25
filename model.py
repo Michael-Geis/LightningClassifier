@@ -1,20 +1,11 @@
 ## IMPORTS
-import os
-import regex
-import pandas as pd
-import numpy as np
-import cleantext
-
-from datasets import Dataset, DatasetDict
-from transformers import AutoModelForSequenceClassification, AutoTokenizer
+from transformers import AutoModelForSequenceClassification
 
 import lightning as L
 from lightning.pytorch.loggers import CSVLogger
 
 import torch
 import torchmetrics
-from torch.utils.data import Dataset as TorchDataset
-from torch.utils.data import DataLoader
 import config
 
 

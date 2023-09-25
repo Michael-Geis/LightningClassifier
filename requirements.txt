@@ -2,6 +2,8 @@ datasets
 transformers
 
 torch
+torchvision
+torchaudio
 torchmetrics
 lightning
 
@@ -9,3 +11,4 @@ numpy
 pandas
 regex
 clean-text
+unidecode
