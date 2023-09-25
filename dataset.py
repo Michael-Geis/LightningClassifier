@@ -13,6 +13,8 @@ from torch.utils.data import Dataset as TorchDataset
 import lightning as L
 import config
 
+#### TODO ----- PUT THE TOKENIZATION OF THE DATASET BACK INTO PREPARE DATA? DOES THAT NEED TO BE CALLED ON EVERY GPU?
+
 
 class ArXivDataset(TorchDataset):
     def __init__(self, dataset):
