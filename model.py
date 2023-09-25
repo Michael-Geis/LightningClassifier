@@ -42,7 +42,8 @@ class FineTuneHeadForMLC(L.LightningModule):
         return output
 
     def _shared_step(self, batch, batch_index):
-        output = self(**batch)
+        features, labels = batch
+        output = self.foward(tokenizer_output=features, labels=labels)
         return output["loss"], output["logits"]
 
     def training_step(self, batch, batch_index):
