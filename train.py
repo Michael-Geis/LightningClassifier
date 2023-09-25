@@ -4,16 +4,19 @@ from dataset import ArXivDataModule
 from model import FineTuneHeadForMLC
 import config
 
+## Config variables
 MAX_EPOCHS = config.MAX_EPOCHS
 ACCELERATOR = config.ACCELERATOR
 DEVICES = config.DEVICES
 DETERMINISTIC = config.DETERMINISTIC
 LEARNING_RATE = config.LEARNING_RATE
 
+DATA_DIR = config.DATA_DIR
+
 
 def main(learning_rate=LEARNING_RATE):
     torch.manual_seed(93696)
-    dm = ArXivDataModule(path_to_data_dir="./data/")
+    dm = ArXivDataModule(data_dir=DATA_DIR)
     model = FineTuneHeadForMLC(learning_rate=learning_rate)
 
     trainer = L.Trainer(

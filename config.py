@@ -8,6 +8,7 @@ TOKENIZER_TRUNCATION = True
 TOKENIZER_PADDING = "max_length"
 
 ## Data
+DATA_DIR = "./data/"
 NUM_LABELS = 18
 INPUT_TEXT_COLUMN = "title"
 LABEL_COLUMNS = [

@@ -1,4 +1,5 @@
 import os
+import os
 import regex
 import cleantext
 import numpy as np
@@ -13,7 +14,11 @@ from torch.utils.data import Dataset as TorchDataset
 import lightning as L
 import config
 
-#### TODO ----- PUT THE TOKENIZATION OF THE DATASET BACK INTO PREPARE DATA? DOES THAT NEED TO BE CALLED ON EVERY GPU?
+## CONFIG VARIABLES
+DATA_DIR = config.DATA_DIR
+
+#### TODO ----- PUT THE TOKENIZATION OF THE DATASET BACK INTO PREPARE DATA? DOES THAT
+####            NEED TO BE CALLED ON EVERY GPU?
 
 
 class ArXivDataset(TorchDataset):
@@ -40,18 +45,34 @@ class ArXivDataset(TorchDataset):
 
 
 class ArXivDataModule(L.LightningDataModule):
-    def __init__(self, path_to_data_dir):
+    def __init__(self, data_dir):
         super().__init__()
+        self.data_dir = data_dir
         self.batch_size = config.DATALOADER_BATCH_SIZE
         self.num_workers = config.DATALOADER_NUM_WORKERS
 
-        self.source_dataset_dict = self._dataset_dict_from_file(path_to_data_dir)
+        ## Pre-process and tokenize dataset to create dataloaders if it does not exist on disk.
+        self.path_to_tokenized_dataset_dict = os.path.join(
+            self.data_dir, "tokenized_dataset/"
+        )
+
+        if not os.path.exists(self.path_to_tokenized_dataset_dict):
+            self.source_dataset_dict = self._dataset_dict_from_file(data_dir)
+            self.preprocessed_dataset_dict = self._preprocess_dataset_dict(
+                self.source_dataset_dict
+            )
+            self.preprocessed_dataset_dict.set_format("torch")
+            self.preprocessed_dataset_dict.save_to_disk(
+                self.path_to_tokenized_dataset_dict
+            )
+
+        ## Otherwise load the pre-processed DatasetDict from disk.
+        else:
+            self.preprocessed_dataset_dict = DatasetDict.load_from_disk(
+                self.path_to_tokenized_dataset_dict
+            )
 
     def setup(self, stage=None):
-        self.preprocessed_dataset_dict = self._preprocess_dataset_dict(
-            self.source_dataset_dict
-        )
-        self.preprocessed_dataset_dict.set_format("torch")
         self.train_dataset = ArXivDataset(self.preprocessed_dataset_dict["train"])
         self.val_dataset = ArXivDataset(self.preprocessed_dataset_dict["val"])
         self.test_dataset = ArXivDataset(self.preprocessed_dataset_dict["test"])
@@ -75,7 +96,7 @@ class ArXivDataModule(L.LightningDataModule):
 
     ## Data preparation helper functions
 
-    def _dataset_dict_from_file(self, path_to_data_dir):
+    def _dataset_dict_from_file(self, data_dir):
         """Returns HF DatasetDict instance with train/val/test splits. Each dataset
         contains a field called 'title' containing the title of the article and one field for
         each of the possible labels e.g. 'math.CO'. Each subject field has a value of either 0
@@ -92,9 +113,7 @@ class ArXivDataModule(L.LightningDataModule):
         """
         split_dict = {}
         for split in ["train", "val", "test"]:
-            source_data_df = pd.read_parquet(
-                os.path.join(path_to_data_dir, f"{split}.parquet")
-            )
+            source_data_df = pd.read_parquet(os.path.join(data_dir, f"{split}.parquet"))
 
             label_columns = config.LABEL_COLUMNS
             input_text_column = config.INPUT_TEXT_COLUMN
