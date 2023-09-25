@@ -27,10 +27,11 @@ class ArXivDataset(TorchDataset):
             setattr(self, col, dataset[col])
 
     def __getitem__(self, index):
-        output = {"labels": self.labels[index]}
+        labels = self.labels[index]
+        features = {}
         for col in self.feature_columns:
-            output[col] = getattr(self, col)[index]
-        return output
+            features[col] = getattr(self, col)[index]
+        return features, labels
 
     def __len__(self):
         return len(self.dataset)
@@ -60,13 +61,25 @@ class ArXivDataModule(L.LightningDataModule):
         return ArXivDataset(dataset)
 
     def train_dataloader(self):
-        return DataLoader(self.setup("train"))
+        return DataLoader(
+            self.setup("train"),
+            batch_size=config.DATALOADER_BATCH_SIZE,
+            num_workers=config.DATALOADER_NUM_WORKERS,
+        )
 
     def val_dataloader(self):
-        return DataLoader(self.setup("val"))
+        return DataLoader(
+            self.setup("val"),
+            batch_size=config.DATALOADER_BATCH_SIZE,
+            num_workers=config.DATALOADER_NUM_WORKERS,
+        )
 
     def test_dataloader(self):
-        return DataLoader(self.setup("test"))
+        return DataLoader(
+            self.setup("test"),
+            batch_size=config.DATALOADER_BATCH_SIZE,
+            num_workers=config.DATALOADER_NUM_WORKERS,
+        )
 
     ## Data preparation helper functions
 
