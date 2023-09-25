@@ -48,35 +48,29 @@ class ArXivDataModule(L.LightningDataModule):
             self.source_dataset_dict
         )
         self.preprocessed_dataset_dict.set_format("torch")
-        return self.preprocessed_dataset_dict
 
     def setup(self, stage):
-        try:
-            dataset = self.preprocessed_dataset_dict[stage]
-        except:
-            print(
-                "This dataset only contains the following splits: 'train','val','test'."
-            )
-            dataset = None
-        return ArXivDataset(dataset)
+        self.train_dataset = self.preprocessed_dataset_dict["train"]
+        self.val_dataset = self.preprocessed_dataset_dict["val"]
+        self.test_dataset = self.preprocessed_dataset_dict["test"]
 
     def train_dataloader(self):
         return DataLoader(
-            self.setup("train"),
+            self.train_dataset,
             batch_size=config.DATALOADER_BATCH_SIZE,
             num_workers=config.DATALOADER_NUM_WORKERS,
         )
 
     def val_dataloader(self):
         return DataLoader(
-            self.setup("val"),
+            self.val_dataset,
             batch_size=config.DATALOADER_BATCH_SIZE,
             num_workers=config.DATALOADER_NUM_WORKERS,
         )
 
     def test_dataloader(self):
         return DataLoader(
-            self.setup("test"),
+            self.test_dataset,
             batch_size=config.DATALOADER_BATCH_SIZE,
             num_workers=config.DATALOADER_NUM_WORKERS,
         )
