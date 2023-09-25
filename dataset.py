@@ -43,13 +43,11 @@ class ArXivDataModule(L.LightningDataModule):
 
         self.source_dataset_dict = self._dataset_dict_from_file(path_to_data_dir)
 
-    def prepare_data(self):
+    def setup(self, stage):
         self.preprocessed_dataset_dict = self._preprocess_dataset_dict(
             self.source_dataset_dict
         )
         self.preprocessed_dataset_dict.set_format("torch")
-
-    def setup(self, stage):
         self.train_dataset = self.preprocessed_dataset_dict["train"]
         self.val_dataset = self.preprocessed_dataset_dict["val"]
         self.test_dataset = self.preprocessed_dataset_dict["test"]
