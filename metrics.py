@@ -1,10 +1,6 @@
 ## Imports
 import torchmetrics
-import lightning as L
-from dataset import ArXivDataModule
-from model import FineTuneHeadForMLC
 import config
-import os
 
 ## Config variables
 NUM_LABELS = config.NUM_LABELS
