@@ -5,7 +5,8 @@ import lightning as L
 from lightning.pytorch.loggers import CSVLogger
 
 import torch
-import torchmetrics
+
+from metrics import micro_metrics, macro_metrics
 import config
 
 
@@ -14,6 +15,16 @@ class FineTuneHeadForMLC(L.LightningModule):
         super().__init__()
 
         self.lr = learning_rate
+
+        ## Initialize train metrics
+        self.micro_train_metrics = micro_metrics.clone(prefix="train_micro_")
+        self.macro_train_metrics = macro_metrics.clone(prefix="train_macro_")
+
+        ## Initialize val metrics
+        self.micro_val_metrics = micro_metrics.clone(prefix="val_micro_")
+        self.macro_val_metrics = macro_metrics.clone(prefix="val_macro_")
+
+        ## Initialize model and freeze pre-trained layers
         self.model = AutoModelForSequenceClassification.from_pretrained(
             config.MODEL_NAME_OR_PATH,
             problem_type="multi_label_classification",
@@ -39,10 +50,32 @@ class FineTuneHeadForMLC(L.LightningModule):
 
     def training_step(self, batch, batch_index):
         loss, logits = self._shared_step(batch, batch_index)
+        labels = batch["labels"]
+
+        micro_mets = self.micro_train_metrics(logits, labels)
+        self.log_dict(micro_mets, on_step=False, on_epoch=True)
+
+        macro_mets = self.macro_train_metrics(logits, labels)
+        self.log_dict(macro_mets, on_step=False, on_epoch=True)
+
         return loss
 
     def validation_step(self, batch, batch_index):
         loss, logits = self._shared_step(batch, batch_index)
+        labels = batch["labels"]
+        self.log("val_loss", loss, on_step=False, on_epoch=True)
+
+        self.micro_val_metrics.update(logits, labels)
+        self.macro_val_metrics.update(logits, labels)
+
+    def on_validation_epoch_end(self) -> None:
+        micro_mets = self.micro_val_metrics.compute()
+        self.log_dict(micro_mets)
+        self.micro_val_metrics.reset()
+
+        macro_mets = self.macro_val_metrics.compute()
+        self.log_dict(macro_mets)
+        self.macro_val_metrics.reset()
 
     def configure_optimizers(self):
         return torch.optim.Adam(self.parameters(), lr=self.lr)

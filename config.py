@@ -45,3 +45,6 @@ ACCELERATOR = "auto"
 DEVICES = "auto"
 DETERMINISTIC = True
 LEARNING_RATE = 2e-5
+
+## Metrics
+THRESHOLD = 0.5
