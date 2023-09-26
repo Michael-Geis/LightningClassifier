@@ -3,6 +3,7 @@ import lightning as L
 from dataset import ArXivDataModule
 from model import FineTuneHeadForMLC
 import config
+import os
 
 ## Config variables
 MAX_EPOCHS = config.MAX_EPOCHS
@@ -15,6 +16,7 @@ DATA_DIR = config.DATA_DIR
 
 
 def main(learning_rate=LEARNING_RATE):
+    os.environ["TOKENIZERS_PARALLELISM"] = False
     torch.manual_seed(93696)
     dm = ArXivDataModule(data_dir=DATA_DIR)
     model = FineTuneHeadForMLC(learning_rate=learning_rate)
