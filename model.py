@@ -53,10 +53,10 @@ class FineTuneHeadForMLC(L.LightningModule):
         features, labels = batch
 
         micro_mets = self.micro_train_metrics(logits, labels)
-        self.log_dict(micro_mets, on_step=False, on_epoch=True)
+        self.log_dict(micro_mets, on_step=False, on_epoch=True, sync_dist=True)
 
         macro_mets = self.macro_train_metrics(logits, labels)
-        self.log_dict(macro_mets, on_step=False, on_epoch=True)
+        self.log_dict(macro_mets, on_step=False, on_epoch=True, sync_dist=True)
 
         return loss
 
@@ -70,11 +70,11 @@ class FineTuneHeadForMLC(L.LightningModule):
 
     def on_validation_epoch_end(self) -> None:
         micro_mets = self.micro_val_metrics.compute()
-        self.log_dict(micro_mets)
+        self.log_dict(micro_mets, sync_dist=True)
         self.micro_val_metrics.reset()
 
         macro_mets = self.macro_val_metrics.compute()
-        self.log_dict(macro_mets)
+        self.log_dict(macro_mets, sync_dist=True)
         self.macro_val_metrics.reset()
 
     def configure_optimizers(self):
