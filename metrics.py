@@ -25,7 +25,7 @@ micro_metrics = torchmetrics.MetricCollection(
 
 macro_metrics = torchmetrics.MetricCollection(
     [
-        torchmetrics.classificationn.MultilabelPrecision(**macro_metric_kwargs),
+        torchmetrics.classification.MultilabelPrecision(**macro_metric_kwargs),
         torchmetrics.classification.MultilabelRecall(**macro_metric_kwargs),
         torchmetrics.classification.MultilabelF1Score(**macro_metric_kwargs),
     ]
