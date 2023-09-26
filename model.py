@@ -50,7 +50,7 @@ class FineTuneHeadForMLC(L.LightningModule):
 
     def training_step(self, batch, batch_index):
         loss, logits = self._shared_step(batch, batch_index)
-        labels = batch["labels"]
+        features, labels = batch
 
         micro_mets = self.micro_train_metrics(logits, labels)
         self.log_dict(micro_mets, on_step=False, on_epoch=True)
@@ -62,7 +62,7 @@ class FineTuneHeadForMLC(L.LightningModule):
 
     def validation_step(self, batch, batch_index):
         loss, logits = self._shared_step(batch, batch_index)
-        labels = batch["labels"]
+        features, labels = batch
         self.log("val_loss", loss, on_step=False, on_epoch=True)
 
         self.micro_val_metrics.update(logits, labels)
