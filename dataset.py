@@ -68,6 +68,7 @@ class ArXivDataModule(L.LightningDataModule):
             self.preprocessed_dataset_dict = DatasetDict.load_from_disk(
                 self.path_to_tokenized_dataset_dict
             )
+            self.preprocessed_dataset_dict.set_format("torch")
 
     def setup(self, stage=None):
         self.train_dataset = ArXivDataset(self.preprocessed_dataset_dict["train"])
