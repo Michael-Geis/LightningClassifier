@@ -1,7 +1,7 @@
 import torch
 import lightning as L
 from lightning.pytorch.callbacks import ModelCheckpoint
-from lightning.pytorch.tuner import Tuner
+from lightning.pytorch.tuner.tuning import Tuner
 from dataset import ArXivDataModule
 from model import FineTuneHeadForMLC
 import config
@@ -45,10 +45,12 @@ def main(learning_rate=LEARNING_RATE):
     dm = ArXivDataModule(data_dir=DATA_DIR)
 
     if learning_rate == "auto":
-        model = FineTuneHeadForMLC(learning_rate=1.0)
+        model = FineTuneHeadForMLC(learning_rate=0.1)
         ## Use automatic learning rate finder to find a candidate lr
         tuner = Tuner(trainer)
-        tuner.lr_find(model=model, datamodule=dm)
+        tuner.lr_find(
+            model=model, datamodule=dm, update_attr=True
+        )  # Sets lr as finder lr
     else:
         model = FineTuneHeadForMLC(learning_rate=learning_rate)
 
