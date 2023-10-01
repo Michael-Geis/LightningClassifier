@@ -15,6 +15,7 @@ class FineTuneHeadForMLC(L.LightningModule):
         super().__init__()
 
         self.lr = learning_rate
+        self.save_hyperparameters(ignore=["model"])
 
         ## Initialize train metrics
         self.micro_train_metrics = micro_metrics.clone(prefix="train_micro_")
