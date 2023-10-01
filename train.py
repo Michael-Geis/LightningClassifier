@@ -48,8 +48,7 @@ def main(learning_rate=LEARNING_RATE):
         model = FineTuneHeadForMLC(learning_rate=1.0)
         ## Use automatic learning rate finder to find a candidate lr
         tuner = Tuner(trainer)
-        lr_finder = tuner.lr_find(model=model, datamodule=dm)
-        model.lr = lr_finder.suggestion()
+        tuner.lr_find(model=model, datamodule=dm)
     else:
         model = FineTuneHeadForMLC(learning_rate=learning_rate)
 

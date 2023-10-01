@@ -44,7 +44,7 @@ MAX_EPOCHS = 1
 ACCELERATOR = "auto"
 DEVICES = "auto"
 DETERMINISTIC = True
-LEARNING_RATE = 6e-4
+LEARNING_RATE = "auto"
 CHECKPOINT_PATH = "./saved_model/"
 
 ## Metrics
