@@ -1,12 +1,16 @@
+## HuggingFace
 datasets
 transformers
 
+## Deep Learning
 torch
 torchvision
 torchaudio
 torchmetrics
 lightning
+tensorboard
 
+## Preprocessing
 numpy
 pandas
 regex
