@@ -23,7 +23,11 @@ def main(learning_rate=LEARNING_RATE):
     dm = ArXivDataModule(data_dir=DATA_DIR)
     model = FineTuneHeadForMLC(learning_rate=learning_rate)
     min_val_loss_ckpt = ModelCheckpoint(
-        dirpath=CHECKPOINT_PATH, save_top_k=1, mode="min", monitor="val_loss"
+        dirpath=CHECKPOINT_PATH,
+        save_top_k=1,
+        mode="min",
+        monitor="val_loss",
+        save_last=True,
     )
     trainer = L.Trainer(
         max_epochs=MAX_EPOCHS,
