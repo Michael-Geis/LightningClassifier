@@ -45,6 +45,7 @@ ACCELERATOR = "auto"
 DEVICES = "auto"
 DETERMINISTIC = True
 LEARNING_RATE = 2e-4
+CHECKPOINT_PATH = "./saved_model/"
 
 ## Metrics
 THRESHOLD = 0.6
